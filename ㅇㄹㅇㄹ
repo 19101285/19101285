@@ -1,0 +1,55 @@
+import csv
+
+def read_data(filename):
+    data = []
+    f = open(filename, 'r')
+    next(f)
+    lines = f.read()
+    print(lines) 
+    data = list(lines)
+    return data
+
+
+def add_weighted_average(data, weight):
+    for row in data:
+        row.append(data[0] * weight[0] + data[row] * weight[1])   
+                                    
+def analyze_data(data):
+    mean = sum(data) / len(data)    
+    sum2 = 0
+    for datum in data:
+        sum2 += datum**2     
+    var = sum2 / len(data) - mean**2              
+    median = sorted(data[len(data)//2])          
+    return mean, var, median, min(data), max(data)
+
+if __name__ == '__main__':
+    data = read_data('class_score_en.csv')
+    print(len(data[0]))
+    try :
+        if data and len(data[0]) == 2: 
+            add_weighted_average(data, [40/125, 60/100])
+    except:
+        print('It has a problem')
+    if len(data[0]) == 3:    
+                try:  
+                    print('### Individual Score')
+                    print()
+                    print('| Midterm | Final | Total |')
+                    print('| ------- | ----- | ----- |')
+                    for row in data:
+                        print(f'| {row[0]} | {row[1]} | {row[2]:.3f} |')
+                    print()
+                    print('### Examination Analysis')
+                    col_n = len(data[0])
+                    col_name = ['Midterm', 'Final', 'Total']
+                    colwise_data = [ [row[c] for row in data] for c in range(col_n) ]
+                    for c, score in enumerate(colwise_data):
+                        mean, var, median, min_, max_ = analyze_data(score)
+                        print(f'* {col_name[c]}')
+                        print(f'  * Mean: **{mean:.3f}**')
+                        print(f'  * Variance: {var:.3f}')
+                        print(f'  * Median: **{median:.3f}**')
+                        print(f'  * Min/Max: ({min_:.3f}, {max_:.3f})')
+                except:
+                    print('A line is ignored.')
